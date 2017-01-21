@@ -33,5 +33,18 @@ namespace Healthcare.Controllers
 
             return View();
         }
+        public ActionResult Procedure()
+        {
+            ViewBag.Message = "Your Deafajjjult page.";
+
+            return View();
+        }
+        public ActionResult Doctor()
+        {
+            ViewBag.Message = "Your Deafajjjult page.";
+
+            return View();
+        }
+
     }
 }
