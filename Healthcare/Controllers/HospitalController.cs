@@ -6,34 +6,35 @@ using System.Web.Mvc;
 
 namespace Healthcare.Controllers
 {
-    public class ProcedureController : Controller
+    public class HospitalController : Controller
     {
-        // GET: Procedure
+        // GET: Hospital
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult ProcedureDetail( string SpecName)
-        {
-            ViewBag.SpecName = SpecName;
-            return View();
-        }
-        public ActionResult Article()
+        public ActionResult Detail()
         {
             return View();
         }
 
-        public ActionResult Appointment()
-        {
-            return View();
-        }
-        public ActionResult Hospital()
+        public ActionResult Procedure()
         {
             return View();
         }
 
-        public ActionResult Cost()
+        public ActionResult DoctorList()
+        {
+            return View();
+        }
+
+        public ActionResult ShowContact()
+        {
+            return View();
+        }
+
+        public ActionResult Gallery()
         {
             return View();
         }

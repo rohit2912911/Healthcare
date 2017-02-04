@@ -6,255 +6,296 @@
 @{
     Html.RenderPartial("header");
 }
+<script src="~/Scripts/jquery.bootpag.min.js"></script>
+
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.118/styles/kendo.common-material.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.118/styles/kendo.material.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.1.118/styles/kendo.material.mobile.min.css" />
+
+<script src="https://kendo.cdn.telerik.com/2017.1.118/js/jquery.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2017.1.118/js/kendo.all.min.js"></script>
+
+
 
 <script type="text/javascript">
-
+    var dSource = "";
     $(document).ready(function () {
         debugger;
-        $("body").append(function () {
-            return $("<div>").html("I'm a freshly created div. I also contain some Ps!")
-                .attr("id", "myDivId")
-                .addClass("myDivClass")
-                .css("border", "solid")
-                .append($("<p>").html("I think, therefore I am."))
-                .append($("<p>").html("The die is cast."))
+
+
+
+        dSource = new kendo.data.DataSource({
+            pageSize: 5,
+            transport: {
+                read: {
+                    dataType: "json",
+                    crossDomain: true,
+                    url: "http://localhost:64181/procedures",
+                    type: "GET",
+                }
+            },
         });
 
-        $.ajax({
-            type: 'GET',
-            url: 'http://localhost:64181/procedures',
-            dataType: 'json',
-            success: function (data) {
-                alert('successful');
-            }
+        var pager = $("#pager").kendoPager({
+            dataSource: dSource
+        }).data("kendoPager");
 
+
+        $("#listView").kendoListView({
+            dataSource: dSource,
+            template: kendo.template($("#template").html())
         });
-             
+
+
+
+
      $.ajax({
-            type: "GET",
+           type: "GET",
             url: "http://localhost:64181/procedures" ,
             crossDomain: true,
           // contentType: "application/json",
             dataType: "json",
             success: function (data) {
                 debugger;
-                alert(data[0].SPEACILITY_NAME);
+                alert(data[0].SPECIALITY_NAME);
                 $.each(data, function (i, data)
                 {
-                    $('#ProcedureList').append('<div class="single-blog-left">  <ul class="blog-comments-box"> <li>May <h2>10</h2>2015</li>  <li><span class="fa fa-eye"></span>1523</li> <li><a href="#"><span class="fa fa-comments"></span>5</a></li> </ul></div>      <div class="single-blog-right"> <div class="blog-img"><figure class="blog-figure"><a href="#"><img alt="img" src=""></a><span class="image-effect"></span> </figure> </div><div class="blog-author"><div id="ProcedureName">'+ data.SPEACILITY_NAME+' </div>  <ul><li>By <a href="#">Dr. Smith</a></li><li>In <a href="#">Dental</a></li>    </ul></div><div class="blog-content"><h2>Latest Trend Of Medical Dental Department</h2> <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable.</p> <!-- Read more btn --> <a class="wpcf7-submit button--itzel" href="#"> <i class="button__icon fa fa-link"></i><span>Read More</span>  </a> </div></div>');
 
+                           // $('#ProcedureList').append('<div class="single-blog-left">  <ul class="blog-comments-box"> <li>May <h2>10</h2>2015</li>  <li><span class="fa fa-eye"></span>1523</li> <li><a href="#"><span class="fa fa-comments"></span>5</a></li> </ul></div>      <div class="single-blog-right"> <div class="blog-img"><figure class="blog-figure"><a href="#"><img alt="img" src=""></a><span class="image-effect"></span> </figure> </div><div class="blog-author"><div id="ProcedureName">' + data.SPEACILITY_NAME + ' </div>  <ul><li>By <a href="#">Dr. Smith</a></li><li>In <a href="#">Dental</a></li>    </ul></div><div class="blog-content"><h2>Latest Trend Of Medical Dental Department</h2> <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which dont look even slightly believable.</p> <!-- Read more btn --> <a class="wpcf7-submit button--itzel" href="#"> <i class="button__icon fa fa-link"></i><span>Read More</span>  </a> </div></div>');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    //$('#ProcedureName').append('<p> Name : <b>' + data.SPEACILITY_NAME + '</b><br> ');
                 });
             },
-                     
+
      });
- 
-            
+
+
     });
+
+
+    $(document).on('click', '#postdata', function () {
+        debugger;
+      
+        var SpecName = $(e.target).data('SPECIALITY_NAME');
+
+        var param = {
+            "SPECIALITY_NAME": SpecName,
+        }
+
+        $.ajax({
+            type: "POST",
+            //url: '@Url.Action("PatientDetail", "Referral")',
+            url: "/Procedure/ProcedureDetail",
+            crossDomain: true,
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify(param),
+            success: function (data) {
+                window.location = "/Procedure/ProcedureDetail";
+            },
+            error: function (data) {
+                window.location = "/Procedure/ProcedureDetail";
+            },
+        });
+    });
+
+
 </script>
 
 <section id="blogArchive">
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <div class="blog-breadcrumbs-area">
-                <div class="container">
-                    <div class="blog-breadcrumbs-left">
-                        <h2>Procedure</h2>
-                    </div>
-                    <div class="blog-breadcrumbs-right">
-                        <ol class="breadcrumb">
-                            <li>You are here</li>
-                            <li><a href="#">Home</a></li>
-                            <li class="active">Procedure</li>
-                        </ol>
+    
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="blog-breadcrumbs-area">
+                    <div class="container">
+                        <div class="blog-breadcrumbs-left">
+                            <h2>Procedure</h2>
+                        </div>
+                        <div class="blog-breadcrumbs-right">
+                            <ol class="breadcrumb">
+                                <li>You are here</li>
+                                <li><a href="#">Home</a></li>
+                                <li class="active">Procedure</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 col-sm-12">
-                        <!-- Start Blog Archive Area -->
-                        <div class="blogArchive-area">
-                            <div class="row">
-                                <!-- Start Blog Content -->
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="blog-content">
-                                        <!-- Start Single Blog -->
-                                        <div  id="ProcedureList"class="single-Blog">
-                                            <div class="single-blog-left">
-                                                <ul class="blog-comments-box">
-                                                    <li>May <h2>10</h2>2015</li>
-                                                    <li><span class="fa fa-eye"></span>1523</li>
-                                                    <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="single-blog-right">
-                                                <div class="blog-img">
-                                                    <figure class="blog-figure">
-                                                        <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
-                                                        <span class="image-effect"></span>
-                                                    </figure>
-                                                </div>
-                                                <div class="blog-author">
-                                                  <div id="ProcedureName"> Procedure Name </div>
-                                                       <ul>
-                                                        <li>By <a href="#">Dr. Smith</a></li>
-                                                        <li>In <a href="#">Dental</a></li>
-                                                    </ul>
-                                                </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <!-- Start Blog Archive Area -->
+                            <div class="blogArchive-area">
+                                <div class="row">
+                                    <!-- Start Blog Content -->
+                                    <div class="col-md-12 col-sm-12">
+                                        <div class="blog-content">
+                                            <!-- Start Single Blog -->
+                                            <div id="main">
+                                                <div id="listView"></div>
+                                                <div id="pager" class="k-pager-wrap"></div>
 
-                                                <div class="blog-content">
-                                                    <h2>Latest Trend Of Medical Dental Department</h2>
-                                                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
-                                                    <!-- Read more btn -->
-                                                    <a class="wpcf7-submit button--itzel" href="#">
-                                                        <i class="button__icon fa fa-link"></i>
-                                                        <span>Read More</span>
-                                                    </a>
-                                                </div>
-                                          
-  </div>
-                                        </div>
-                                        <!-- Start Single Blog -->
-                                        <div class="single-Blog">
-                                            <div class="single-blog-left">
-                                                <ul class="blog-comments-box">
-                                                    <li>May <h2>10</h2>2015</li>
-                                                    <li><span class="fa fa-eye"></span>1523</li>
-                                                    <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="single-blog-right">
-                                                <div class="blog-img">
-                                                    <figure class="blog-figure">
-                                                        <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
-                                                        <span class="image-effect"></span>
-                                                    </figure>
-                                                </div>
-                                                <div class="blog-author">
-                                                    <ul>
-                                                        <li>By <a href="#">Dr. Smith</a></li>
-                                                        <li>In <a href="#">Dental</a></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="blog-content">
-                                                    <h2>Latest Trend Of Medical Dental Department</h2>
-                                                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
-                                                    <!-- Read more btn -->
-                                                    <a class="wpcf7-submit button--itzel" href="#">
-                                                        <i class="button__icon fa fa-link"></i>
-                                                        <span>Read More</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Start Single Blog -->
-                                        <div class="single-Blog">
-                                            <div class="single-blog-left">
-                                                <ul class="blog-comments-box">
-                                                    <li>May <h2>10</h2>2015</li>
-                                                    <li><span class="fa fa-eye"></span>1523</li>
-                                                    <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="single-blog-right">
-                                                <div class="blog-img">
-                                                    <figure class="blog-figure">
-                                                        <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
-                                                        <span class="image-effect"></span>
-                                                    </figure>
-                                                </div>
-                                                <div class="blog-author">
-                                                    <ul>
-                                                        <li>By <a href="#">Dr. Smith</a></li>
-                                                        <li>In <a href="#">Dental</a></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="blog-content">
-                                                    <h2>Latest Trend Of Medical Dental Department</h2>
-                                                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
-                                                    <!-- Read more btn -->
-                                                    <a class="wpcf7-submit button--itzel" href="#">
-                                                        <i class="button__icon fa fa-link"></i>
-                                                        <span>Read More</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- Start Single Blog -->
-                                        <div class="single-Blog">
-                                            <div class="single-blog-left">
-                                                <ul class="blog-comments-box">
-                                                    <li>May <h2>10</h2>2015</li>
-                                                    <li><span class="fa fa-eye"></span>1523</li>
-                                                    <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="single-blog-right">
-                                                <div class="blog-img">
-                                                    <figure class="blog-figure">
-                                                        <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
-                                                        <span class="image-effect"></span>
-                                                    </figure>
-                                                </div>
-                                                <div class="blog-author">
-                                                    <ul>
-                                                        <li>By <a href="#">Dr. Smith</a></li>
-                                                        <li>In <a href="#">Dental</a></li>
-                                                    </ul>
-                                                </div>
-                                                <div class="blog-content">
-                                                    <h2>Latest Trend Of Medical Dental Department</h2>
-                                                    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
-                                                    <!-- Read more btn -->
-                                                    <a class="wpcf7-submit button--itzel" href="#">
-                                                        <i class="button__icon fa fa-link"></i>
-                                                        <span>Read More</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                @*<div id="ProcedureList" class="single-Blog">
+                                                    <div class="single-blog-left">
+                                                        <ul class="blog-comments-box">
+                                                            <li>May <h2>10</h2>2015</li>
+                                                            <li><span class="fa fa-eye"></span>1523</li>
+                                                            <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="single-blog-right">
+                                                        <div class="blog-img">
+                                                            <figure class="blog-figure">
+                                                                <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
+                                                                <span class="image-effect"></span>
+                                                            </figure>
+                                                        </div>
+                                                        <div class="blog-author">
+                                                            <div id="ProcedureName"> Procedure Name </div>
+                                                            <ul>
+                                                                <li>By <a href="#">Dr. Smith</a></li>
+                                                                <li>In <a href="#">Dental</a></li>
+                                                            </ul>
+                                                        </div>
 
-                                        <!-- Start blog pagination  -->
+                                                        <div class="blog-content">
+                                                            <h2>Latest Trend Of Medical Dental Department</h2>
+                                                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+                                                            <!-- Read more btn -->
+                                                            <a class="wpcf7-submit button--itzel" href="#">
+                                                                <i class="button__icon fa fa-link"></i>
+                                                                <span>Read More</span>
+                                                            </a>
+                                                        </div>
 
-                                        <div class="blog-pagination">
-                                            <nav>
-                                                <ul class="pagination">
-                                                    <li>
-                                                        <a href="#" aria-label="Previous">
-                                                            <span class="fa fa-angle-left"></span>
-                                                        </a>
-                                                    </li>
-                                                    <li><a href="#">1</a></li>
-                                                    <li><a href="#">2</a></li>
-                                                    <li><a href="#">3</a></li>
-                                                    <li><a href="#">4</a></li>
-                                                    <li><a href="#">5</a></li>
-                                                    <li>
-                                                        <a href="#" aria-label="Next">
-                                                            <span class="fa fa-angle-right"></span>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </nav>
+                                                    </div>
+                                                </div>
+                                                <!-- Start Single Blog -->
+                                                <div class="single-Blog">
+                                                    <div class="single-blog-left">
+                                                        <ul class="blog-comments-box">
+                                                            <li>May <h2>10</h2>2015</li>
+                                                            <li><span class="fa fa-eye"></span>1523</li>
+                                                            <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="single-blog-right">
+                                                        <div class="blog-img">
+                                                            <figure class="blog-figure">
+                                                                <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
+                                                                <span class="image-effect"></span>
+                                                            </figure>
+                                                        </div>
+                                                        <div class="blog-author">
+                                                            <ul>
+                                                                <li>By <a href="#">Dr. Smith</a></li>
+                                                                <li>In <a href="#">Dental</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="blog-content">
+                                                            <h2>Latest Trend Of Medical Dental Department</h2>
+                                                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+                                                            <!-- Read more btn -->
+                                                            <a class="wpcf7-submit button--itzel" href="#">
+                                                                <i class="button__icon fa fa-link"></i>
+                                                                <span>Read More</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Start Single Blog -->
+                                                <div class="single-Blog">
+                                                    <div class="single-blog-left">
+                                                        <ul class="blog-comments-box">
+                                                            <li>May <h2>10</h2>2015</li>
+                                                            <li><span class="fa fa-eye"></span>1523</li>
+                                                            <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="single-blog-right">
+                                                        <div class="blog-img">
+                                                            <figure class="blog-figure">
+                                                                <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
+                                                                <span class="image-effect"></span>
+                                                            </figure>
+                                                        </div>
+                                                        <div class="blog-author">
+                                                            <ul>
+                                                                <li>By <a href="#">Dr. Smith</a></li>
+                                                                <li>In <a href="#">Dental</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="blog-content">
+                                                            <h2>Latest Trend Of Medical Dental Department</h2>
+                                                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+                                                            <!-- Read more btn -->
+                                                            <a class="wpcf7-submit button--itzel" href="#">
+                                                                <i class="button__icon fa fa-link"></i>
+                                                                <span>Read More</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Start Single Blog -->
+                                                <div class="single-Blog">
+                                                    <div class="single-blog-left">
+                                                        <ul class="blog-comments-box">
+                                                            <li>May <h2>10</h2>2015</li>
+                                                            <li><span class="fa fa-eye"></span>1523</li>
+                                                            <li><a href="#"><span class="fa fa-comments"></span>5</a></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="single-blog-right">
+                                                        <div class="blog-img">
+                                                            <figure class="blog-figure">
+                                                                <a href="#"><img alt="img" src="~/Content/images/9.jpg"></a>
+                                                                <span class="image-effect"></span>
+                                                            </figure>
+                                                        </div>
+                                                        <div class="blog-author">
+                                                            <ul>
+                                                                <li>By <a href="#">Dr. Smith</a></li>
+                                                                <li>In <a href="#">Dental</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="blog-content">
+                                                            <h2>Latest Trend Of Medical Dental Department</h2>
+                                                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+                                                            <!-- Read more btn -->
+                                                            <a class="wpcf7-submit button--itzel" href="#">
+                                                                <i class="button__icon fa fa-link"></i>
+                                                                <span>Read More</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+
+                                                <!-- Start blog pagination  -->
+
+                                            </div>
+                                           <div class="blog-pagination">
+                                                <nav>
+                                                    <ul class="pagination">
+                                                        <li>
+                                                            <a href="#" aria-label="Previous">
+                                                                <span class="fa fa-angle-left"></span>
+                                                            </a>
+                                                        </li>
+                                                        <li><a href="#">1</a></li>
+                                                        <li><a href="#">2</a></li>
+                                                        <li><a href="#">3</a></li>
+                                                        <li><a href="#">4</a></li>
+                                                        <li><a href="#">5</a></li>
+                                                        <li>
+                                                            <a href="#" aria-label="Next">
+                                                                <span class="fa fa-angle-right"></span>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -264,6 +305,367 @@
                 </div>
             </div>
         </div>
-    </div>
+    
+    
 </section>
+<script type="text/x-kendo-tmpl" id="template">
 
+
+
+
+    <div class="single-Blog">
+        <div class="single-blog-left">
+            <ul class="blog-comments-box">
+                <li>May <h2>10</h2>2015</li>
+                <li>1523</li>
+                <li>5</li>
+
+               </ul>
+        </div>
+       
+<div class="single-blog-right">
+<div class="blog-img">
+<figure class="blog-figure">
+    <img src="../Content/images/9.jpg" style="width:942px;height:353px" />
+    <span class="image-effect"></span>
+</figure>
+
+</div>
+    <div class="blog-author">
+       <ul>
+<li>
+    <a href='../Procedure/ProcedureDetail?SpecName=${SPECIALITY_NAME}'>${SPECIALITY_NAME}</a>
+    @*<a id="postdata" data-SPECIALITY_NAME="${SPECIALITY_NAME}">#:SPECIALITY_NAME#</a>*@
+</li>
+<li>bye</li>
+</ul>
+    </div>
+
+<div class="blog-content">
+    <h2>Latest Trend Of Medical Dental Department</h2>
+    <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.</p>
+   
+</div>
+</div>
+
+       
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+</script>
+<style>
+    #listView {
+        padding: 10px 5px;
+        margin-bottom: -1px;
+        min-height: 100px;
+    }
+.single-Blog{
+	float: left;
+	display: inline;
+	width: 100%;
+}
+.single-blog-left{
+	float: left;
+	display: inline;
+	width: 18%;
+}
+blog-comments-box li {
+  border-bottom: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
+  color: #aaa;
+  display: block;
+  float: left;  
+  padding: 15px;
+  text-align: center;
+  width: 100%;  
+}
+.blog-comments-box li:last-child{
+	border-bottom: none;
+}
+.blog-comments-box li > h2 {
+  font-size: 33px;
+  line-height: 32px;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.blog-comments-box li span {  
+  display: block;
+  font-size: 16px;
+}
+.blog-comments-box li > a {
+  color: #aaa;
+  text-decoration: none;
+}
+
+
+.single-blog-right{
+	float: right;
+	display: inline;
+	width: 78%;
+}
+.blog-img{
+	float: left;
+	display: inline;
+	width: 100%;
+}
+.blog-img img{
+	width: 100%;
+}
+figure.blog-figure {
+	/*background: #3498db;*/
+}
+
+figure.blog-figure img {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=95)";
+    filter: alpha(opacity=95);
+    opacity: 0.95;
+    -moz-transition: opacity 0.35s, -moz-transform 0.35s;
+    -o-transition: opacity 0.35s, -o-transform 0.35s;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -moz-transition: opacity 0.35s, -moz-transform 0.35s;
+    -o-transition: opacity 0.35s, -o-transform 0.35s;
+    -webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+    transition: opacity 0.35s, transform 0.35s;
+    -moz-transform: scale3d(1.05, 1.05, 1);
+    -ms-transform: scale3d(1.05, 1.05, 1);
+    -o-transform: scale3d(1.05, 1.05, 1);
+    -webkit-transform: scale3d(1.05, 1.05, 1);
+    transform: scale3d(1.05, 1.05, 1)
+}
+
+figure.blog-figure:hover img {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+	filter: alpha(opacity=60);
+	opacity: 0.6;
+	-moz-transform: scale3d(1, 1, 1);
+	-ms-transform: scale3d(1, 1, 1);
+	-o-transform: scale3d(1, 1, 1);
+	-webkit-transform: scale3d(1, 1, 1);
+	transform: scale3d(1, 1, 1)
+}
+.blog-img figure {
+  background: none repeat scroll 0 0 #3085a3;
+  cursor: pointer;
+  float: left;
+  height: auto;
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+}
+.blog-img figure img {
+	position: relative;
+	display: block;
+	min-height: 100%;
+	max-width: 100%;
+	opacity: 0.8;
+}
+figure.blog-figure .image-effect::before {  
+	content: "";
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	-moz-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, -100%, 0);
+	-ms-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, -100%, 0);
+	-o-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, -100%, 0);
+	-webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, -100%, 0);
+	transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, -100%, 0);
+	-moz-transition: -moz-transform 0.6s ease 0s;
+	-o-transition: -o-transform 0.6s ease 0s;
+	-webkit-transition: -webkit-transform 0.6s ease 0s;
+	transition: transform 0.6s ease 0s;
+	width: 100%
+}
+figure.blog-figure:hover .image-effect::before {
+	-moz-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, 100%, 0);
+    -ms-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, 100%, 0);
+    -o-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, 100%, 0);
+    -webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, 100%, 0);
+    transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg) translate3d(0, 100%, 0)
+}
+
+.blog-author {
+  display: inline;
+  float: left;
+  padding: 10px 0;
+  width: 100%;
+}
+.blog-author > ul > li {
+  display: inline-block;
+  padding: 5px;
+  color: #aaa;
+}
+.blog-content{
+	float: left;
+	display: inline;
+	width: 100%;
+}
+.blog-content > h2 {
+  font-size: 18px;
+  line-height: 25px;
+}
+.blog-content .readmore_area a { 
+  font-size: 14px;
+  margin-left: 0;
+}
+.blog-content .readmore_area a::before { 
+  padding: 8px 13px;  
+}
+.blog-content .readmore_area a span { 
+  padding: 8px 13px;  
+}
+.blog-content .readmore_area {
+  margin-top: 25px;  
+}
+.blog-content .button--itzel {
+    text-align: center;
+    width: 170px;
+}
+.button--itzel {
+    border: none;
+    padding: 0px;
+    overflow: hidden;
+    width: 255px;
+}
+.wpcf7-submit {
+	float: left;
+	min-width: 150px;
+	max-width: 250px;
+	font-weight: 600;
+	display: block;
+	margin: 1em;
+	padding: 1em 2em;
+	border: none;
+	background: none;
+	color: inherit;
+	vertical-align: middle;
+	position: relative;
+	z-index: 1;
+	-webkit-backface-visibility: hidden;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+    .button--itzel .button__icon {
+        background-color: #fff;
+        position: absolute;
+        top: 104%;
+        left: 50%;
+        padding: 20px;
+        font-size: 20px;
+    }
+.button--itzel {
+	border: none;
+	padding: 0px;
+	overflow: hidden;
+	width: 255px;
+}
+.button--itzel::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	-webkit-clip-path: polygon(0% 0%, 0% 100%, 35% 100%, 35% 60%, 65% 60%, 65% 100%, 100% 100%, 100% 0%);
+	clip-path: url(../index.html#clipBox);
+	-webkit-transform: translate3d(0, 100%, 0) translate3d(0, -2px, 0);
+	transform: translate3d(0, 100%, 0) translate3d(0, -2px, 0);
+	-webkit-transform-origin: 50% 100%;
+	transform-origin: 50% 100%;
+}
+.button--itzel.button--border-thin::before {
+	border: 1px solid;
+	-webkit-transform: translate3d(0, 100%, 0) translate3d(0, -1px, 0);
+	transform: translate3d(0, 100%, 0) translate3d(0, -1px, 0);
+}
+.button--itzel.button--border-thick::before {
+	border: 3px solid;
+	-webkit-transform: translate3d(0, 100%, 0) translate3d(0, -3px, 0);
+	transform: translate3d(0, 100%, 0) translate3d(0, -3px, 0);
+}
+.button--itzel::before,
+.button--itzel .button__icon {
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
+	-webkit-transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
+	transition-timing-function: cubic-bezier(0.75, 0, 0.125, 1);
+}
+.button--itzel .button__icon {
+	background-color: #fff;
+	position: absolute;
+    top: 104%;
+    left: 50%;
+    padding: 20px;
+    font-size: 20px;
+    -moz-transform: translate3d(-50%, 0, 0);
+    -ms-transform: translate3d(-50%, 0, 0);
+    -o-transform: translate3d(-50%, 0, 0);
+    -webkit-transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-50%, 0, 0)
+}
+.button--itzel > span {	
+	display: block;
+    padding: 20px;
+    -moz-transition: -moz-transform 0.3s, opacity 0.3s;
+    -o-transition: -o-transform 0.3s, opacity 0.3s;
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
+    -moz-transition: -moz-transform 0.3s, opacity 0.3s;
+    -o-transition: -o-transform 0.3s, opacity 0.3s;
+    -webkit-transition: -webkit-transform 0.3s, opacity 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
+    -moz-transition-delay: 0.3s;
+    -o-transition-delay: 0.3s;
+    -webkit-transition-delay: 0.3s;
+    transition-delay: 0.3s
+}
+.button--itzel:hover::before {
+	-moz-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0)
+}
+.button--itzel:hover .button__icon {
+	 -moz-transition-delay: 0.1s;
+    -o-transition-delay: 0.1s;
+    -webkit-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+    -moz-transform: translate3d(-50%, -100%, 0);
+    -ms-transform: translate3d(-50%, -100%, 0);
+    -o-transform: translate3d(-50%, -100%, 0);
+    -webkit-transform: translate3d(-50%, -100%, 0);
+    transform: translate3d(-50%, -100%, 0)
+}
+.button--itzel:hover > span {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+    opacity: 0;
+    -moz-transform: translate3d(0, -50%, 0);
+    -ms-transform: translate3d(0, -50%, 0);
+    -o-transform: translate3d(0, -50%, 0);
+    -webkit-transform: translate3d(0, -50%, 0);
+    transform: translate3d(0, -50%, 0);
+    -moz-transition-delay: 0s;
+    -o-transition-delay: 0s;
+    -webkit-transition-delay: 0s;
+    transition-delay: 0s
+}
+
+</style>
